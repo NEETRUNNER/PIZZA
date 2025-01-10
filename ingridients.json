@@ -1,0 +1,26 @@
+[
+  {
+    "ingridient_title": "Дорблю",
+    "ingridient_img": "https://roll-club.dp.ua/wp-content/uploads/2020/12/dor-blyu.png.webp",
+    "ingridient_counter": 0,
+    "id": "1"
+  },
+  {  
+    "ingridient_title": "Крем-сир",
+    "ingridient_img": "https://roll-club.dp.ua/wp-content/uploads/2021/04/krem-syr.png.webp",
+    "ingridient_counter": 0,
+    "id": "2"
+  },
+  {
+    "ingridient_title": "Моцарелла",
+    "ingridient_img": "https://roll-club.dp.ua/wp-content/uploads/2020/12/motsarella.png.webp",
+    "ingridient_counter": 0,
+    "id": "3"
+  },
+  {
+    " ingridient_title": "Пармезан",
+    "ingridient_img": "https://roll-club.dp.ua/wp-content/uploads/2020/12/parmezan.png.webp",
+    "ingridient_counter": 0,
+    "id": "4"
+  }
+]
