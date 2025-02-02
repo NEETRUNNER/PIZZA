@@ -1,8 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = {
+interface initialState {
+    currentPage: number;
+    onPage: number;
+}
+
+const initialState: initialState = {
     currentPage: 1,
-    onPage: 9
+    onPage: 8,
 }
 
 export const paginationSlice = createSlice({

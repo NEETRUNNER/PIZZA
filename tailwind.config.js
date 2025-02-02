@@ -5,13 +5,16 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}"
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     fontFamily: {
       'nunito': ['Nunito'] // Скачиваем из fonts и помещаем в index.html
     },
     extend: {
+      backgroundImage: {
+        'pizza_bg': "url('./img/pizza_bg.jpg')"
+      },
       screens: {
         'xs': '320px', // добавление кастомного брейкпоинта
         'xm': '480px',
@@ -22,5 +25,5 @@ export default {
       },
     },
   },
-  plugins: [nextui()],
+  plugins: [nextui(), require('tailwind-hamburgers')]
 }

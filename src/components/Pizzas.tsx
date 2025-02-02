@@ -1,36 +1,39 @@
-import { FiPlus } from "react-icons/fi";
-import { LuMinus } from "react-icons/lu";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { useParams, Link, useLocation } from "react-router-dom";
 import slugify from "slugify";
 
-import { selectors } from "../redux/selectors";
+import { Selectors } from "../redux/selectors";
 import { useDispatch } from "react-redux";
 
-import {Image} from "@nextui-org/react";
-import { GiShoppingCart } from "react-icons/gi";
-
-import {Button} from "@nextui-org/react";
+import { Rating } from "primereact/rating";
 
 import { paginationSlice } from "../redux/reducers/PaginationSlice";
 import { pizzaSlice } from "../redux/reducers/pizzaSlice";
+import { notificationSlice } from "../redux/reducers/notificationSlice";
+
+import LoadSkeleton from "../other/Skeleton";
 
 const Pizzas = () => {
-    const {onPage, currentPage, pizzaData, selectedPizza, pizzasForDelivery, selectedIngridients} = selectors();
-    const dispatch = useDispatch();
-    
+    const {currentPage, onPage, selectedPizza, pizzasForDelivery, filteredPizzas, pizzaData, selectedOption} = Selectors();
+    const {setCurrentPage} = paginationSlice.actions;
+    const {addPizza, deletePizza, addToBasketCart, setFilterMode} = pizzaSlice.actions;
+    const {toggleAlert} = notificationSlice.actions;
+
+    const [loading, setLoading] = useState<boolean>(true);
+
     const { pizzaPage } = useParams<{pizzaPage: string}>();
     const location = useLocation();
+    const dispatch = useDispatch();
 
-    const {setCurrentPage} = paginationSlice.actions;
-    const {addPizza, deletePizza, addToBasketCart, resetPizzaCounter} = pizzaSlice.actions;
-
-    const totalIngridientPrice = selectedIngridients.reduce((total, ingridient) => total + ingridient.ingridient_price * ingridient.ingridient_counter, 0);
-
-    const lastPageIndex = currentPage * onPage; // 9
+    const lastPageIndex = currentPage * onPage; // 8
     const firstPageIndex = lastPageIndex - onPage; // 0
-    const currentPages = pizzaData.slice(firstPageIndex, lastPageIndex); // 0, 9
+    const sliced = filteredPizzas.slice(firstPageIndex, lastPageIndex);
+
+    const addPizzaToBasket = (pizza_title: string, pizza_counter: number, pizza_id: number, pizza_price: number, pizza_img: string, pizza_descr: string) => {
+        dispatch(addToBasketCart({pizza_title: pizza_title, pizza_counter: pizza_counter, pizza_id: pizza_id, pizza_price: pizza_price, pizza_img: pizza_img, pizza_descr: pizza_descr}))
+        dispatch(dispatch(toggleAlert({ type: "pizza", value: true })))
+    }
 
     useEffect(() => {
         if (pizzaPage) {
@@ -39,8 +42,18 @@ const Pizzas = () => {
     }, [currentPage, location.pathname])
 
     useEffect(() => {
-        dispatch(resetPizzaCounter())
+        dispatch(setFilterMode(pizzaData))
     }, [location.pathname])
+
+    useEffect(() => {
+        setLoading(true);
+
+        const timeOut = setTimeout(() => {
+            setLoading(false);
+        }, 1200);
+
+        return () => clearTimeout(timeOut)
+    }, [selectedOption, currentPage])
 
     useEffect(() => {
         console.log('Выбранные пиццы', selectedPizza)
@@ -49,64 +62,46 @@ const Pizzas = () => {
 
     return (
         <>
-        {currentPages?.map((item) => {
-            return <div key={item.id} className="pizza-block__item w-72 my-4">
-                <Image
-                    isZoomed
-                    alt="NextUI Fruit Image with Zoom"
-                    src={item.pizza_img}
-                />
-                <h1 className="text-black text-xl font-extrabold min-h-16 font-nunito pt-2">{item.pizza_title}</h1>
+        {loading ? <div className=""><LoadSkeleton/></div> : sliced.map((item) => {
+            return <div key={item.id} className="pizza-block__item md:max-w-[600px] xs:w-full my-4 relative">
 
-                <div className="flex items-center justify-between">
-                    <p className="text-black text-xl font-extrabold mt-2 font-nunito">{item.pizza_weight} г</p>
-
-                    <Link to={`/pizza-product/${slugify(item.pizza_title, { lower: true, locale: 'ru'})}`}>
-                        <Button 
-                        color="primary" variant="ghost">
-                            Додати інгридиєнти
-                        </Button>
-                    </Link>
-                </div>
-
-                <h2 className="text-gray-400 text-md font-light mt-4 min-h-24">{item.pizza_descr}</h2>
-                
-                <div className="flex justify-between items-center">
-                <p className="text-black"><span className="text-xl font-bold">{item.pizza_price * item.pizza_counter} грн</span></p>
-
-                    <div className="flex justify-center">
-                    <button
-                        onClick={() => dispatch(deletePizza({pizza_title: item.pizza_title, pizza_counter: item.pizza_counter, pizza_id: item.id, pizza_price: item.pizza_price, selectedIngridients: selectedIngridients, totalIngridientPrice: totalIngridientPrice}))}
-                        disabled={item.pizza_counter === 1}
-                        type="button"
-                        className="py-2 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-900 align-middle hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-600 transition-all text-sm"
-                    >
-                        <LuMinus />
-                    </button>
-                    <button
-                        type="button"
-                        className="py-2 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-900 align-middle hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-2 transition-all text-sm"
-                    >
-                        {item.pizza_counter}
-                    </button>
-                    <button
-                        onClick={() => dispatch(addPizza({pizza_title: item.pizza_title, pizza_counter: item.pizza_counter, pizza_id: item.id, pizza_price: item.pizza_price, selectedIngridients: selectedIngridients, totalIngridientPrice: totalIngridientPrice}))}
-                        type="button"
-                        className="py-2 px-4 inline-flex justify-center items-center gap-2 -ml-px first:rounded-l-lg first:ml-0 last:rounded-r-lg border font-medium bg-white text-gray-900 align-middle hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-600 transition-all text-sm"
-                    >
-                        <FiPlus />
-                    </button>
-                    </div>
-                    
-                </div>
-                <button
-                    onClick={() => dispatch(addToBasketCart({pizza_title: item.pizza_title, pizza_counter: item.pizza_counter, pizza_id: item.id, pizza_price: item.pizza_price, pizza_img: item.pizza_img, selectedIngridients: selectedIngridients}))}
-                    disabled={item.pizza_counter <= 0}
-                    className={`px-12 py-4 tracking-widest uppercase font-bold text-xs mx-auto flex items-center mt-4 font-nunito transition duration-300 ${item.pizza_counter <= 0 ? 'bg-transparent text-black border-[1px] border-neutral-500 shadow-[inset_0_0_0_2px_#616467] hover:bg-neutral-200 hover:text-black' : 'bg-gradient-to-r from-red-400 to-red-600 text-white shadow-lg hover:from-red-500 hover:to-red-700'}`}>
-                    Додати до кошику <GiShoppingCart className="ml-2" size='2em'/>
-                </button> 
+            <div className="flex justify-between items-center w-full md:absolute xs:relative">
+                <h1 className="text-black md:text-2xl xs:text-md w-max font-nunito uppercase font-extrabold p-1">{item.pizza_title}</h1>
+                <Rating value={item.rating} cancel={false} className="custom-rating px-2 h-12" style={{color: '#FFA500'}} />
             </div>
-            
+                <Link to={`/pizza-product/${slugify(item.pizza_title, { lower: true, locale: 'ru'})}`}>
+                    <img
+                        alt="pizza_img"
+                        src={item.pizza_img}
+                        className="w-max"
+                    />                
+                </Link>
+
+                <div className="flex items-center justify-between my-4 flex-wrap">
+
+                    <p className="text-orange-500 md:text-2xl xs:text-xl font-nunito uppercase font-extrabold">{item.pizza_price} грн</p>
+                    <div className="flex justify-center items-center gap-x-4">
+                        <button 
+                            onClick={() => dispatch(deletePizza({ pizza_title: item.pizza_title, pizza_counter: item.pizza_counter, pizza_id: item.id, pizza_price: item.pizza_price }))}
+                            disabled={item.pizza_counter === 1} 
+                            className="text-black md:text-xl xs:text-lg font-bold bg-gray-200 rounded-full md:w-10 md:h-10 xs:w-7 xs:h-7 flex items-center justify-center hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-md transition duration-200">-</button>
+
+                        <span className="md:text-2xl xs:text-xl font-nunito font-extrabold text-gray-800">{item.pizza_counter}</span>
+
+                        <button
+                            onClick={() => dispatch(addPizza({ pizza_title: item.pizza_title, pizza_counter: item.pizza_counter, pizza_id: item.id, pizza_price: item.pizza_price }))}
+                            className="text-black temd:xt-xl f xs:text-lg font-bold bg-orange-400 rounded-full md:w-10 md:h-10 xs:w-7 xs:h-7 flex items-center justify-center hover:bg-orange-500 shadow-md transition duration-200">+</button>
+                    </div>
+
+                    <button
+                    onClick={() => addPizzaToBasket(item.pizza_title, item.pizza_counter, item.id, item.pizza_price, item.pizza_img, item.pizza_descr)}
+                    disabled={item.pizza_counter <= 0}
+                    className={`md:w-48 xs:w-full text-white md:mt-0 xs:mt-4 px-1 justify-center py-2 tracking-widest bg-orange-500 uppercase font-bold md:text-base xs:text-xm flex items-center font-nunito transition duration-300'}`}>
+                    Замовити
+                </button> 
+                </div>
+                
+            </div>
         })}
         </>
     )

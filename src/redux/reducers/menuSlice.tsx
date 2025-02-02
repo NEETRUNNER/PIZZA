@@ -1,19 +1,31 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
-const initialState = {
-    toggleCartMenu: false,
+interface initialState {
+    toggleCartMenu: boolean;
+    toggleBurgerMenu: boolean;
+    notificationOpen: boolean;
 }
 
-export const basketSlice = createSlice({
-    name: 'basket',
+const initialState: initialState = {
+    toggleCartMenu: false,
+    toggleBurgerMenu: false,
+    notificationOpen: false
+}
+
+export const menuSlice = createSlice({
+    name: 'menu',
     initialState,
     reducers: { // Из-за библиотеки immer функции пишутся по другому
         toggleMenuCart(state, action: PayloadAction<boolean>) {
             state.toggleCartMenu = action.payload;
+        },
+        toggleMenuBurger(state, action) {
+            state.toggleBurgerMenu = action.payload;
         }
+
     }
 })
 
-export default basketSlice.reducer; // Автоматически создается экшен
+export default menuSlice.reducer; // Автоматически создается экшен
 
 // Прописывать .reducer при экспорте из слайса нужно, чтобы предоставить доступ к основной логике управления состоянием, которую ожидает configureStore в Redux Toolkit. */

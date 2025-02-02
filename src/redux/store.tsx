@@ -1,16 +1,20 @@
-import basketSlice from './reducers/basketSlice'
+import menuSlice from './reducers/menuSlice'
 import paginationSlice from "./reducers/PaginationSlice";
 import pizzaSlice from "./reducers/pizzaSlice";
-import ingridientSlice from "./reducers/ingridientSlice";
+import filterSlice from './reducers/filterSlice';
+import userSlice from './reducers/userSlice';
+import notificationSlice from './reducers/notificationSlice';
 
 import { configureStore } from "@reduxjs/toolkit";
 
 export const store = configureStore({
     reducer: {
         pizza: pizzaSlice,
-        ingridient: ingridientSlice,
         pagination: paginationSlice,
-        basket: basketSlice // Было basket: basketReducer
+        menu: menuSlice,
+        filter: filterSlice,
+        notification: notificationSlice,
+        user: userSlice,
     }
 })
 
