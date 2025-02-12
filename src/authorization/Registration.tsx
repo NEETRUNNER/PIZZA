@@ -1,27 +1,30 @@
-import axios from 'axios';
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom';
+
+import axios from 'axios';
 
 import { useDispatch } from 'react-redux';
 import { notificationSlice } from '../redux/reducers/notificationSlice';
 
-const Registration = () => {
-    const dispatch = useDispatch();
-    const [emailValue, setEmailValue] = useState<string>('');
-    const [passwordValue, setPasswordValue] = useState<string>('');
-    const {register, handleSubmit, formState: { errors }} = useForm();
+import { NewUser } from './Login';
 
+const Registration: React.FC = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    const {register, reset, handleSubmit, formState: { errors }} = useForm();
     const {toggleAlert} = notificationSlice.actions;
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: NewUser) => {
         try {
-            setEmailValue('')
-            setPasswordValue('')
+            reset({
+                email: '',
+                password: ''
+            })
             console.log(data.password, data.email)
     
-            const response = await axios.post('https://pizza-backend.up.railway.app/auth/registration', {
+            const response = await axios.post<NewUser>('https://pizza-backend.up.railway.app/auth/registration', {
                 email: data.email,
                 password: data.password
             })
@@ -33,8 +36,8 @@ const Registration = () => {
                 navigate('/login');
                 dispatch(toggleAlert({ type: "registration", value: true }));
             }
-
             return response;
+
         } catch(e) {
             console.log(e);
         }
@@ -46,7 +49,7 @@ const Registration = () => {
             <h1 className="text-orange-500 md:text-3xl xs:text-2xl font-bold mb-8 text-center uppercase font-nunito">
                 Регістрація
             </h1>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-2">
                 <div>
                     <label htmlFor="email" className="block text-sm font-semibold text-gray-700">
                         Email
@@ -61,14 +64,13 @@ const Registration = () => {
                                 message: "Введіть корректний email",
                             },
                         })}
-                        value={emailValue}
-                        onChange={(e) => setEmailValue(e.target.value)}
+                        name="email"
                         placeholder="Введіть email"
                         className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
                     {errors.email && (
                         <p className="text-red-500 text-xs mt-2 font-nunito text-center">
-                            {errors.root?.message}
+                            {errors.email.message as ReactNode}
                         </p>
                     )}
                 </div>
@@ -87,9 +89,7 @@ const Registration = () => {
                                 message: "Пароль не може бути менше 8 символів",
                             },
                         })}
-                        value={passwordValue}
                         name="password"
-                        onChange={(e) => setPasswordValue(e.target.value)}
                         placeholder="380*********"
                         className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />

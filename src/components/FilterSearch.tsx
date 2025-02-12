@@ -1,6 +1,6 @@
 import slugify from 'slugify';
 
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { IoMdArrowForward, IoMdClose } from "react-icons/io";
@@ -9,10 +9,9 @@ import { Selectors } from '../redux/selectors';
 import { menuSlice } from '../redux/reducers/menuSlice';
 import { useDispatch } from 'react-redux';
 
-interface  filterState {
+interface filterState {
     pizza_weight: string;
     id: string;
-    pizza_id: number;
     pizza_title: string;
     pizza_counter: number;
     pizza_price: number;
@@ -21,8 +20,9 @@ interface  filterState {
     amount: number;
 }
 
-const InputFilter = ({className}: any) => {
+const InputFilter: React.FC<any> = ({className}) => { // Это обьявление функционального компонента который дженериком принимает типы пропсов
     const dispatch = useDispatch();
+    const {pizzaData, toggleBurgerMenu} = Selectors();
 
     const [inputData, setInputData] = useState<string | undefined>('');
     const [filteredPizzas, setFilteredPizzas] = useState<filterState[]>([]);
@@ -30,7 +30,6 @@ const InputFilter = ({className}: any) => {
     const refInputMenu = useRef<HTMLDivElement>(null);
     const refInput = useRef<HTMLDivElement>(null)
 
-    const {pizzaData, toggleBurgerMenu} = Selectors();
     const {toggleMenuBurger} = menuSlice.actions;
 
     const search = pizzaData.filter(item => item.pizza_title.includes(inputData ? inputData : ''));

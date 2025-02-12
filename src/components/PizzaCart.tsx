@@ -11,15 +11,20 @@ import { menuSlice } from "../redux/reducers/menuSlice";
 import { pizzaSlice } from "../redux/reducers/pizzaSlice";
 import { RootState } from "../redux/store";
 
-const PizzaCart = () => {
+import { Link } from "react-router-dom";
+import useCloseMenu from "../hooks/useCloseMenu";
+
+const PizzaCart: React.FC = () => {
+
     const {toggleBasketCart, pizzasForDelivery} = Selectors();
+    const dispatch = useDispatch();
+    const location = useLocation();
+
     const {toggleMenuCart} = menuSlice.actions;
     const {deleteFromBasket} = pizzaSlice.actions;
 
-    const cartButtonRef = document.querySelector('.cart-button')
+    const cartButtonRef = document.querySelector<HTMLElement>('.cart-button')
     const menuRef = useRef<HTMLDivElement>(null);
-    const dispatch = useDispatch();
-    const location = useLocation();
 
     const totalPizzaPrice = useSelector((state: RootState) => state.pizza.totalPizzaPrice);
 
@@ -39,25 +44,9 @@ const PizzaCart = () => {
       config: {
           duration: 200, // Чуть больше длительность для плавности
       },
-  });
+    });
 
-    const openMenu = () => {
-        document.addEventListener('click', (e) => {
-            if (menuRef.current && cartButtonRef) {
-                
-                if (!menuRef.current.contains(e.target as Node) && !cartButtonRef.contains(e.target as Node)) {
-                    dispatch(toggleMenuCart(false));
-                }
-            }
-        })
-    }
-
-    useEffect(() => {    
-        openMenu();
-
-        document.addEventListener('click', openMenu);
-        return () => document.removeEventListener('click', openMenu)
-    }, [toggleBasketCart])
+    useCloseMenu(menuRef, cartButtonRef, () => dispatch(toggleMenuCart(false)), toggleBasketCart) // Кастомный хук
 
     useEffect(() => {
         dispatch(toggleMenuCart(false));
@@ -66,7 +55,7 @@ const PizzaCart = () => {
     return transitions((style, item) => item && (
       <animated.div
         style={style}
-        onClick={() => openMenu()}
+        onClick={() => dispatch(toggleMenuCart(false))}
         ref={menuRef}
         className="cart bg-white xs:max-h-1/4 lg:w-1/4 md:w-4/12 xs:w-full fixed right-0 z-40 overflow-auto"
       >
@@ -117,22 +106,28 @@ const PizzaCart = () => {
                   </h3>
                 </div>
                 
-              <img src={delete_icon} onClick={() => dispatch(deleteFromBasket({pizza_id: item.pizza_id, pizza_price: item.pizza_price}))} alt="" className="md:w-8 xs:w-6 cursor-pointer" />
+              <img src={delete_icon} onClick={() => dispatch(deleteFromBasket({pizza_id: item.id, pizza_price: item.pizza_price}))} alt="" className="md:w-8 xs:w-6 cursor-pointer" />
 
               </div>
             ))}
           </div>
 
           <div className="flex items-center justify-center flex-wrap flex-col w-full p-4">
-            {pizzasForDelivery.length <= 0 ? <div className="text-black uppercase font-bold font-nunito my-4 md:text-base xs:text-xs">Кошик порожній</div> : 
+
+            {
+            pizzasForDelivery.length <= 0 ? <div className="text-black uppercase font-bold font-nunito my-4 md:text-base xs:text-xs">Кошик порожній</div> : 
             
             <>
             <div className="cart-pizza__delivery flex items-center justify-between flex-wrap my-4 flex-row w-full px-4">
-            <p className="cart-pizza cart-pizza__totalprice text-orange-500 md:text-xl xs:text-md font-bold font-nunito uppercase">Загальна сума:</p>
-            <p className="cart-pizza cart-pizza__totalprice text-orange-500 md:text-xl xs:text-md font-bold font-nunito uppercase">{totalPizzaPrice} грн</p>
-          </div>
-          <button className="cart-pizza__btn bg-orange-500 text-white font-nunito p-2 font-bold w-full">Оформити замовлення</button>
-            </>}
+              <p className="cart-pizza cart-pizza__totalprice text-orange-500 md:text-xl xs:text-md font-bold font-nunito uppercase">Загальна сума:</p>
+              <p className="cart-pizza cart-pizza__totalprice text-orange-500 md:text-xl xs:text-md font-bold font-nunito uppercase">{totalPizzaPrice} грн</p>
+            </div>
+
+            <Link to='/order' className="w-full">
+              <button className="cart-pizza__btn bg-orange-500 text-white font-nunito p-2 font-bold w-full">Оформити замовлення</button>
+            </Link>
+            </>
+            }
 
           </div>
           

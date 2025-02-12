@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 interface initialState {
-    selectedOption: string | object | undefined;
+    selectedOption: string | undefined;
 }
 
 const initialState: initialState = {

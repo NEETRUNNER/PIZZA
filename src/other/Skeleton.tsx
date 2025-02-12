@@ -1,7 +1,7 @@
-import {Card, Skeleton} from "@heroui/react";
+import { Card, Skeleton } from "@heroui/react";
 import { Selectors } from "../redux/selectors";
 
-export default function LoadSkeleton () {
+export const LoadSkeleton: React.FC = () => {
     const {filteredPizzas} = Selectors();
 
     return (

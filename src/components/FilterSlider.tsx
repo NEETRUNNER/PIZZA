@@ -1,20 +1,21 @@
 import Slider from "react-slick";
 
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-
 import {useDispatch} from "react-redux";
 import {filterSlice} from "../redux/reducers/filterSlice";
 import {Selectors} from "../redux/selectors";
 import {pizzaSlice} from "../redux/reducers/pizzaSlice";
 
-import {useEffect} from "react";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
-function FilterSlider() {
+import { useEffect } from "react";
+
+const FilterSlider: React.FC = () => {
     const dispatch = useDispatch();
+    const {selectedOption, pizzaData, filteredPizzas} = Selectors();
+
     const {setOption} = filterSlice.actions;
     const {setFilterMode} = pizzaSlice.actions;
-    const {selectedOption, pizzaData, filteredPizzas} = Selectors();
 
     const settings = {
         className: "center",
@@ -73,7 +74,6 @@ function FilterSlider() {
     const pineapple = filterArr('ананас')
     const sousage = filterArr('ковбаски')
     const mushroom = filterArr('печериці');
-    console.log(tomatoPizzas, cheesePizzas, salamiPizzas)
 
     const filteredExspensive = [...pizzaData].sort((a, b) => b.pizza_price - a.pizza_price);
     const filteredCheap = [...pizzaData].sort((a, b) => a.pizza_price - b.pizza_price);

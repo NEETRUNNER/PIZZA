@@ -1,9 +1,10 @@
 import { FaTelegram, FaInstagramSquare  } from "react-icons/fa";
 import { FaSquareFacebook } from "react-icons/fa6";
 import { AiFillTikTok } from "react-icons/ai";
+
 import { Link } from "react-router-dom";
 
-const Footer = () => {
+const Footer: React.FC = () => {
   return (
     <footer className="footer bg-orange-500">
       <div className="footer-container py-10">

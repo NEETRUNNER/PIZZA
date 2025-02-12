@@ -1,30 +1,32 @@
 import { useLocation, useParams } from "react-router-dom";
-import slugify from "slugify";
 
 import { useEffect } from "react";
 
 import { Selectors } from "../redux/selectors";
 import { useDispatch } from "react-redux";
+
 import TipsPizza from "../components/tipsPizza";
 
 import { pizzaSlice } from "../redux/reducers/pizzaSlice";
+import { notificationSlice } from "../redux/reducers/notificationSlice";
 
 import 'react-inner-image-zoom/lib/InnerImageZoom/styles.css'
 import InnerImageZoom from 'react-inner-image-zoom'
-import { notificationSlice } from "../redux/reducers/notificationSlice";
+import slugify from "slugify";
 
-const PizzaItem = () => {
+const PizzaItem: React.FC = () => {
     const {pizzaPrice, pizzasForDelivery, selectedPizza, pizzaData} = Selectors();
-    const {addPizza, deletePizza, addToBasketCart, resetPizzaItem} = pizzaSlice.actions;
-    const {toggleAlert} = notificationSlice.actions;
-
     const { pizzaTitle } = useParams<{pizzaTitle: string}>();
     const location = useLocation();
     const dispatch = useDispatch();
+    
+    const {addPizza, deletePizza, addToBasketCart, resetPizzaItem} = pizzaSlice.actions;
+    const {toggleAlert} = notificationSlice.actions;
 
     const pizzaItem = pizzaData.find(item => slugify(item.pizza_title, {lower: true, locale: 'ru'}) === pizzaTitle)
 
-    const addPizzaToBasket = (pizza_title: string, pizza_counter: number, pizza_id: number, pizza_price: number, pizza_img: string, pizza_descr: string) => {
+    const addPizzaToBasket = (pizza_title: string, pizza_counter: number, pizza_id: string, pizza_price: number, pizza_img: string, pizza_descr: string) => {
+
         dispatch(addToBasketCart({pizza_title: pizza_title, pizza_counter: pizza_counter, pizza_id: pizza_id, pizza_price: pizza_price, pizza_img: pizza_img, pizza_descr: pizza_descr}))
         dispatch(toggleAlert({ type: "pizza", value: true }));
     }
@@ -34,7 +36,6 @@ const PizzaItem = () => {
     }, [location.pathname])
 
     useEffect(() => {
-        console.log('Выбранные пиццы', selectedPizza)
         console.log('Пиццы для заказа(уже в массиве корзины)', pizzasForDelivery)
     }, [pizzasForDelivery, selectedPizza])
 
@@ -75,7 +76,7 @@ const PizzaItem = () => {
                             </div>
 
                             <button
-                                onClick={() => addPizzaToBasket(pizzaItem.pizza_title, pizzaItem.pizza_counter, pizzaItem.pizza_id, pizzaItem.pizza_price, pizzaItem.pizza_img, pizzaItem.pizza_descr)}
+                                onClick={() => addPizzaToBasket(pizzaItem.pizza_title, pizzaItem.pizza_counter, pizzaItem.id, pizzaItem.pizza_price, pizzaItem.pizza_img, pizzaItem.pizza_descr)}
                                 disabled={pizzaItem.pizza_counter <= 0}
                                 className={`md:w-48 xs:w-full text-white md:mt-0 xs:mt-4 px-1 justify-center py-2 tracking-widest bg-orange-500 uppercase font-bold md:text-base
                                  xs:text-xm flex items-center font-nunito transition duration-300'}`}>

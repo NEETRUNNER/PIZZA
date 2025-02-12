@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
+import React from 'react';
 
 import pizza from '../img/pizza.gif'
 
-const Start = () => {
+const Start: React.FC = () => {
 
     return (
-        <section className="start"> {/* bg-pizza_bg bg-auto bg-repeat h-screen */}
+        <section className="start">
             <div className="start-container flex flex-col py-32">
                 <img src={pizza} alt="" className='md:w-1/3 xs:w-3/4 mx-auto'/>
                 <Link to='/pizzas-list/1' className='w-max mx-auto'>

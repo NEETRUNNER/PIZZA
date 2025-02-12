@@ -1,8 +1,9 @@
+import React from "react";
 import Login from "../authorization/Login";
 
 import { Selectors } from "../redux/selectors";
 
-const LoginPage = () => {
+const LoginPage: React.FC = () => {
     const {loginToken} = Selectors();
 
     return (

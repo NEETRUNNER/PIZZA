@@ -11,11 +11,10 @@ import FilterSlider from "../components/FilterSlider";
 
 import { useEffect, useState } from "react";
 
-const Main = () => {
+const Main: React.FC = () => {
     const {currentPage, filteredPizzas} = Selectors();
-    const navigate = useNavigate();
-
     const [total, setTotal] = useState<number>(0);
+    const navigate = useNavigate();
 
     const changePage = (page: number) => {
         navigate(`/pizzas-list/${page}`)
@@ -37,7 +36,7 @@ const Main = () => {
                         <SelectPizza/>
                 </div>
 
-                <div className="pizza-wrap flex xs:justify-center py-4 flex-wrap gap-y-12 gap-x-32 justify-center">
+                <div className="pizza-wrap flex xs:justify-center py-4 flex-wrap gap-y-12 gap-x-32 mt-12 justify-center">
                     <Pizzas/>
                 </div>
                 <Pagination className="flex justify-center py-12" initialPage={currentPage} total={total} onChange={(page) => changePage(page)}/>

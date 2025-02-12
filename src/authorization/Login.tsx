@@ -1,41 +1,52 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 import { useForm } from 'react-hook-form'
-import axios from 'axios';
 
 import { userSlice } from '../redux/reducers/userSlice';
+import { notificationSlice } from '../redux/reducers/notificationSlice';
 import { useDispatch } from 'react-redux';
 
-import { saveState } from '../App'; // Сохранение состояния в state
-
 import { Link } from 'react-router-dom';
-import { notificationSlice } from '../redux/reducers/notificationSlice';
+import axios from 'axios';
 
-const Login = () => {
+import useSaveLocalStorage from '../hooks/useSaveLocalStorage';
+
+export interface NewUser {
+    message?: string;
+    token?: string;
+    email: string;
+    password: string | number;
+};
+
+const Login: React.FC = () => {
     const dispatch = useDispatch();
-    const [emailValue, setEmailValue] = useState<string>('');
-    const [passwordValue, setPasswordValue] = useState<string>('');
+    const {register, reset, handleSubmit, formState: { errors }} = useForm();
 
     const {getLoginToken} = userSlice.actions;
     const {toggleAlert} = notificationSlice.actions;
-    
-    const {register, handleSubmit, formState: { errors }} = useForm();
 
-    const onSubmit = async (data: any) => {
-        setEmailValue('')
-        setPasswordValue('')
+    const onSubmit = async (data: NewUser) => {
+
+        reset({
+            email: '',
+            password: ''
+        })
 
         try {
-            const response = await axios.post('https://pizza-backend.up.railway.app/auth/login', {
+            const response = await axios.post<NewUser>('https://pizza-backend.up.railway.app/auth/login', {
+                // Тело запроса
                 email: data.email,
                 password: data.password
             })
-            const token = response.data.token;
+
+            const token = response.data.token; // Токен
+
             if (token) {
                 dispatch(getLoginToken(token))
                 dispatch(toggleAlert({ type: "login", value: true }));
-                saveState(token, "token");
+                useSaveLocalStorage(token, "token");
             }
             return response;
+
         } catch(error) {
             dispatch(toggleAlert({ type: "badLogin", value: true }));
             console.log(error);
@@ -48,7 +59,7 @@ const Login = () => {
             <h1 className="text-orange-500 md:text-3xl xs:text-2xl font-bold mb-8 text-center uppercase font-nunito">
                 Увійти до кабінету
             </h1>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-2"> 
                 <div>
                     <label htmlFor="email" className="block text-sm font-semibold text-gray-700">
                         Email
@@ -63,14 +74,12 @@ const Login = () => {
                                 message: "Введіть корректний email",
                             },
                         })}
-                        value={emailValue}
-                        onChange={(e) => setEmailValue(e.target.value)}
                         placeholder="Введіть email"
                         className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
                     {errors.email && (
                         <p className="text-red-500 text-xs mt-2 font-nunito text-center">
-                            {errors.root?.message}
+                            {errors.email.message as ReactNode}
                         </p>
                     )}
                 </div>
@@ -79,7 +88,7 @@ const Login = () => {
                         Пароль
                     </label>
                     <input
-                        id="phone"
+                        id="password"
                         type="password"
                         autoComplete="on"
                         {...register("password", {
@@ -89,10 +98,8 @@ const Login = () => {
                                 message: "Пароль не може бути менше 8 символів",
                             },
                         })}
-                        value={passwordValue}
                         name="password"
-                        onChange={(e) => setPasswordValue(e.target.value)}
-                        placeholder="380*********"
+                        placeholder="Пароль"
                         className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
                     {errors.password && (

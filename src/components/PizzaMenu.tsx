@@ -1,49 +1,37 @@
 import { useDispatch } from 'react-redux';
 import { Selectors } from '../redux/selectors';
-import { useEffect, useRef } from 'react';
+
+import { useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
 import { menuSlice } from '../redux/reducers/menuSlice';
+import { userSlice } from '../redux/reducers/userSlice';
 
 import InputFilter from './FilterSearch';
 import { FaRegUserCircle } from "react-icons/fa";
 
 import { useTransition, animated } from '@react-spring/web';
-import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem} from "@heroui/react";
-import { userSlice } from '../redux/reducers/userSlice';
-import { Link, useNavigate } from 'react-router-dom';
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
 
-const PizzaMenu = () => {
+import useCloseMenu from '../hooks/useCloseMenu'; // Импорт кастомного хука
+
+const PizzaMenu: React.FC = () => {
+    const { toggleBurgerMenu, loginToken } = Selectors();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const {toggleMenuBurger} = menuSlice.actions;
     const {deleteToken} = userSlice.actions;
 
-    const { toggleBurgerMenu, loginToken } = Selectors();
-    const navigate = useNavigate();
-
-    const cartButtonRef = document.querySelector('.burger-button')
-    const menuRef = useRef<HTMLDivElement>(null);
+    const cartButtonRef = document.querySelector<HTMLElement>('.burger-button')
+    const menuRef = useRef<HTMLDivElement | null>(null);
 
     const exitFromAccount = () => {
         dispatch(deleteToken());
         localStorage.removeItem("token")
     }
 
-    const closeMenu = () => {
-            document.addEventListener('click', (e) => {
-                if (menuRef.current && cartButtonRef) {
-                    
-                    if (!menuRef.current.contains(e.target as Node) && !cartButtonRef.contains(e.target as Node)) {
-                        dispatch(toggleMenuBurger(false));
-                    }
-                }
-            })
-        }
-    
-    useEffect(() => {    
-        closeMenu();
-
-        document.addEventListener('click', closeMenu);
-        return () => document.removeEventListener('click', closeMenu)
-    }, [toggleBurgerMenu])
+    useCloseMenu(menuRef, cartButtonRef, () => dispatch(toggleMenuBurger(false)), toggleBurgerMenu) // Кастомный хук
 
     const transitions = useTransition(toggleBurgerMenu, {
         from: {

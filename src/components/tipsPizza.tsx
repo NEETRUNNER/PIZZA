@@ -1,18 +1,15 @@
 import { Selectors } from "../redux/selectors";
 
 import { Link, useLocation, useParams } from "react-router-dom";
-import slugify from "slugify";
-
 import { useState, useEffect } from "react";
 
 import {useTransition, animated} from '@react-spring/web'
-
 import { Rating } from "primereact/rating";
+import slugify from "slugify";
 
 interface tipPizza {
     pizza_weight: string;
     id: string;
-    pizza_id: number;
     pizza_title: string;
     pizza_counter: number;
     pizza_price: number;
@@ -22,15 +19,13 @@ interface tipPizza {
     rating: number;
 }
 
-const TipsPizza = () => {
+const TipsPizza: React.FC = () => {
     const {pizzaData, tipPizzas} = Selectors();
+    const location = useLocation();
 
     const [openTip] = useState<boolean>(true);
-
     const [tip, setTip] = useState<tipPizza[]>([]);
-
     const { pizzaTitle } = useParams<{pizzaTitle: string}>();
-    const location = useLocation();
 
     const pizzaItem = pizzaData.find(item => (item.pizza_title) === pizzaTitle);
 

@@ -3,7 +3,7 @@ import Select from 'react-select';
 import { useDispatch } from "react-redux";
 import { filterSlice } from "../redux/reducers/filterSlice";
 
-const SelectPizza = () => {
+const SelectPizza: React.FC = () => {
     const dispatch = useDispatch();
 
     const {setOption} = filterSlice.actions;
@@ -49,7 +49,7 @@ const SelectPizza = () => {
           fontWeight: '400',
           color: '#9ca3af',
         }),
-      };
+    };
     
     const customTheme = (theme: any) => ({
         ...theme,

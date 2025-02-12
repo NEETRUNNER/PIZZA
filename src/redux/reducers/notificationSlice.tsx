@@ -6,6 +6,7 @@ interface AlertsState {
     registration: boolean;
     badLogin: boolean;
     badRegistration: boolean;
+    order: boolean;
 }
 
 const initialState: AlertsState = {
@@ -14,6 +15,7 @@ const initialState: AlertsState = {
     registration: false,
     badLogin: false,
     badRegistration: false,
+    order: false
 };
 
 export const notificationSlice = createSlice({

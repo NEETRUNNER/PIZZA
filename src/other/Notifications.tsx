@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Selectors } from "../redux/selectors";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+
 import { notificationSlice } from "../redux/reducers/notificationSlice";
 
 import { FcApproval } from "react-icons/fc";
@@ -162,3 +163,50 @@ export const RegistrationNotification = () => {
         </animated.div>
     )
 )}
+
+export const OrderNotification = () => {
+    const orderState = useSelector((state: RootState) => state.notification.order)
+    const {toggleAlert} = notificationSlice.actions;
+    const dispatch = useDispatch();
+    
+    const transitions = useTransition(orderState, {
+        from: { opacity: 0},
+        enter: { opacity: 1 },
+        leave: { opacity: 0 },
+        config: { duration: 350 },
+    });
+    
+    useEffect(() => {
+        const interval = setTimeout(() => {
+            dispatch(toggleAlert({ type: "order", value: false }));
+        }, 2000);
+
+        return () => clearInterval(interval)
+    }, [orderState])
+
+    return transitions((style, item) => item && (
+        <animated.div style={style} className='notification top-0 bg-white shadow-lg w-full p-2 z-40 fixed'>
+        <div className="notification-container w-full space-y-4 overflow-x-auto">
+            <div className="border-b border-gray-200 last:border-none flex items-center justify-center">   
+                <h1 className="md:text-md xs:text-xs uppercase text-black mt-1 font-nunito">Замовлення успішно оформлене</h1><FcApproval className="ml-1" size='1.3em' />
+            </div>
+        </div>
+        </animated.div>
+
+    )
+)}
+
+const Notifications: React.FC = () => {
+
+    return (
+        <>
+        <PizzaNotification/>
+        <LoginNotification/>
+        <BadLoginNotification/>
+        <RegistrationNotification/>
+        <OrderNotification/>
+        </>   
+    )
+}
+
+export default Notifications;

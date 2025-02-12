@@ -4,28 +4,30 @@ import { GiShoppingCart } from "react-icons/gi";
 import { FaRegUserCircle } from "react-icons/fa";
 
 import InputFilter from '../components/FilterSearch';
+
 import { useDispatch } from 'react-redux';
 import { useRef, useState } from 'react';
-
 import { Selectors } from '../redux/selectors';
 import { menuSlice } from '../redux/reducers/menuSlice';
+import { userSlice } from '../redux/reducers/userSlice';
 
 import classNames from 'classnames';
 import logo from '../img/logo.png'
 
 import { useSpring, animated } from '@react-spring/web';
-import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem} from "@heroui/react";
-import { userSlice } from '../redux/reducers/userSlice';
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
 
-const Header = () => {
-    const {toggleMenuCart, toggleMenuBurger} = menuSlice.actions;
-    const {deleteToken} = userSlice.actions;
-    const {pizzasForDelivery, toggleBurgerMenu, loginToken} = Selectors();
-    const [opened, setOpened] = useState(false);
-
+const Header: React.FC = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [opened, setOpened] = useState<boolean>(false);
+
+    const {toggleMenuCart, toggleMenuBurger} = menuSlice.actions;
+    const {deleteToken} = userSlice.actions;
+
     const cartButtonRef = useRef<HTMLButtonElement>(null);
+
+    const {pizzasForDelivery, toggleBurgerMenu, loginToken} = Selectors();
    
     const counterAnimation = useSpring({
         opacity: pizzasForDelivery.length > 0 ? 1 : 0,
@@ -58,7 +60,7 @@ const Header = () => {
                     <img src={logo} alt="" className="md:max-w-max xs:max-w-1/2 md:w-11/12 xm:w-3/6 xs:w-3/4 z-30 relative" />
                 </Link>
 
-                <InputFilter className={'md:block xm:hidden xs:hidden'}/>
+                <InputFilter className='md:block xm:hidden xs:hidden'/>
 
                 <div className='flex items-center justify-center'>
 

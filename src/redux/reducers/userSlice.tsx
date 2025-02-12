@@ -9,7 +9,7 @@ const initialState: initialState = {
 }
 
 export const userSlice = createSlice({
-    name: 'login',
+    name: 'user',
     initialState,
     reducers: {
         getLoginToken(state, action) {

@@ -5,7 +5,7 @@ import Header from "./ui/Header"
 import Footer from './ui/Footer';
 import PizzaCart from './components/PizzaCart';
 import PizzaMenu from './components/PizzaMenu'
-import { PizzaNotification, LoginNotification, BadLoginNotification, RegistrationNotification } from './other/Notifications';
+import Notifications from './other/Notifications';
 
 import { useDispatch } from 'react-redux';
 import { pizzaDataFetch, filteredDataFetch, tipsDataFetch } from './redux/thunks/Thunks';
@@ -17,18 +17,9 @@ const LazyStart = lazy(() => import('./navigation/Start'));
 const LazyPizzaItem = lazy(() => import('./navigation/PizzaItem'))
 const LazyLogin = lazy(() => import('./navigation/LoginPage'))
 const LazyRegistration = lazy(() => import('./navigation/RegistrationPage'))
+const LazyOrder = lazy(() => import('./navigation/Order'))
 
-// Функция сохранения состояния в localStorage
-export const saveState = (state: string, localStorageName: string) => {
-  try {
-    const serializedState = (state);
-    localStorage.setItem(localStorageName, serializedState);
-  } catch (err) {
-    console.error("Ошибка сохранения в localStorage", err);
-  }
-};
-
-const App = () => {
+const App: React.FC = () => {
   const dispatch = useDispatch<any>(); // Нужно добавлять any когда работаем с createAsyncThunk, чтобы он не вызывал ошибку
 
   useEffect(() => {
@@ -45,10 +36,7 @@ const App = () => {
         <PizzaCart/>
         <Header/>
         
-        <PizzaNotification/>
-        <LoginNotification/>
-        <BadLoginNotification/>
-        <RegistrationNotification/>
+        <Notifications/>
         
         <Routes>
           <Route path="/" element={<LazyStart/>} />
@@ -56,6 +44,7 @@ const App = () => {
           <Route path="/pizza-product/:pizzaTitle" element={<LazyPizzaItem/>} />
           <Route path="/login" element={<LazyLogin/>} />
           <Route path="/registration" element={<LazyRegistration/>} />
+          <Route path="/order" element={<LazyOrder/>} />
         </Routes>
 
       <Footer/>

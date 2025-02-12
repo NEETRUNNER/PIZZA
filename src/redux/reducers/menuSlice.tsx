@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit"
 
 interface initialState {
     toggleCartMenu: boolean;
@@ -16,7 +16,7 @@ export const menuSlice = createSlice({
     name: 'menu',
     initialState,
     reducers: { // Из-за библиотеки immer функции пишутся по другому
-        toggleMenuCart(state, action: PayloadAction<boolean>) {
+        toggleMenuCart(state, action) {
             state.toggleCartMenu = action.payload;
         },
         toggleMenuBurger(state, action) {

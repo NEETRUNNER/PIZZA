@@ -4,7 +4,7 @@ import axios from "axios";
 export const pizzaDataFetch = createAsyncThunk(
     'pizzaData/PizzaDataFetch',
     async () => {
-        const response = await axios.get('https://675b759c9ce247eb193694ae.mockapi.io/api/test/pizzas');
+        const response = await axios.get('https://pizza-backend.up.railway.app/pizza/getPizzaList');
         return response.data;
     }
 )
@@ -12,7 +12,7 @@ export const pizzaDataFetch = createAsyncThunk(
 export const filteredDataFetch = createAsyncThunk(
     'filteredData/FilteredDataFetch',
     async () => {
-        const response = await axios.get('https://675b759c9ce247eb193694ae.mockapi.io/api/test/pizzas');
+        const response = await axios.get('https://pizza-backend.up.railway.app/pizza/getPizzaList');
         return response.data;
     }
 )
@@ -20,7 +20,7 @@ export const filteredDataFetch = createAsyncThunk(
 export const tipsDataFetch = createAsyncThunk(
     'tipsData/TipsDataFetch',
     async () => {
-        const response = await axios.get('https://675b759c9ce247eb193694ae.mockapi.io/api/test/pizzas');
+        const response = await axios.get('https://pizza-backend.up.railway.app/pizza/getPizzaList');
         return response.data;
     }
 )
