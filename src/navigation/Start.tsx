@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import React from 'react';
 
-import pizza from '../img/pizza.gif'
+import pizza from '../img/pizza.gif';
 
 const Start: React.FC = () => {
 
