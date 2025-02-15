@@ -1,12 +1,26 @@
 import Select from 'react-select';
-
-import { useDispatch } from "react-redux";
-import { filterSlice } from "../redux/reducers/filterSlice";
+import { useSearchParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { filterSlice } from '../redux/reducers/filterSlice';
+import { useDispatch } from 'react-redux';
+import { Selectors } from '../redux/selectors';
 
 const SelectPizza: React.FC = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const {selectedOption} = Selectors();
+    const {setOption} = filterSlice.actions;
     const dispatch = useDispatch();
 
-    const {setOption} = filterSlice.actions;
+    const updateFilters = (newFilters: { sort?: string }) => {
+      searchParams.set("sort", (newFilters.sort as string));
+      dispatch(setOption(searchParams.toString().slice(5, searchParams.toString().length)));
+      setSearchParams(searchParams);
+    };
+
+    useEffect(() => {
+      console.log(selectedOption)
+      searchParams.delete("sort")
+    }, [selectedOption])
 
     const customStyles = {
         control: (base: any, state: { isFocused: any; }) => ({
@@ -66,8 +80,9 @@ const SelectPizza: React.FC = () => {
         isSearchable={false}
         className="md:w-72 xs:w-5/6 my-4 text-black md:text-md xs:text-xm font-nunito"
         defaultValue={{value: 'famous', label: 'За популярністю'}}
-        onChange={(e) => dispatch(setOption(e?.value))}
+        onChange={(e) => updateFilters({sort: e?.value})}
         options={[
+          { value: 'all', label: 'Усі піци' }, // 🆕 Добавили вариант "все пиццы"
           { value: 'exspensive', label: 'Від дорогих до дешевих' },
           { value: 'cheap', label: 'Від дешевих до дорогих' },
           { value: 'famous', label: 'За популярністю' },

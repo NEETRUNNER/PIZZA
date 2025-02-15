@@ -10,14 +10,17 @@ import SelectPizza from "../components/SelectPizza";
 import FilterSlider from "../components/FilterSlider";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const Main: React.FC = () => {
     const {currentPage, filteredPizzas} = Selectors();
     const [total, setTotal] = useState<number>(0);
     const navigate = useNavigate();
 
+    const [searchParams, ] = useSearchParams();
+
     const changePage = (page: number) => {
-        navigate(`/pizzas-list/${page}`)
+        navigate(`/pizzas-list/${page}?${searchParams.toString()}`)
     }
 
     const totalPages = Math.ceil(filteredPizzas.length / 8);

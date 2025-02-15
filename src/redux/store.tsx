@@ -1,5 +1,5 @@
 import menuSlice from './reducers/menuSlice'
-import paginationSlice from "./reducers/PaginationSlice";
+import paginationSlice from "./reducers/paginationSlice";
 import pizzaSlice from "./reducers/pizzaSlice";
 import filterSlice from './reducers/filterSlice';
 import userSlice from './reducers/userSlice';

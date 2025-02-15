@@ -8,32 +8,36 @@ import { useDispatch } from "react-redux";
 
 import { Rating } from "primereact/rating";
 
-import { paginationSlice } from "../redux/reducers/PaginationSlice";
+import { paginationSlice } from "../redux/reducers/paginationSlice";
 import { pizzaSlice } from "../redux/reducers/pizzaSlice";
 import { notificationSlice } from "../redux/reducers/notificationSlice";
 
 import { LoadSkeleton } from "../other/Skeleton";
+import { useSearchParams } from "react-router-dom";
 
 const Pizzas: React.FC = () => {
-    const {currentPage, onPage, selectedPizza, pizzasForDelivery, filteredPizzas, pizzaData, selectedOption} = Selectors();
+    const {currentPage, onPage, selectedPizza, pizzasForDelivery, filteredPizzas, selectedOption} = Selectors();
     const [loading, setLoading] = useState<boolean>(true);
     const { pizzaPage } = useParams<{pizzaPage: string}>();
+    const [searchParams, ] = useSearchParams();
 
     const location = useLocation();
     const dispatch = useDispatch();
 
     const {setCurrentPage} = paginationSlice.actions;
-    const {addPizza, deletePizza, addToBasketCart, setFilterMode} = pizzaSlice.actions;
+    const {addPizza, deletePizza, addToBasketCart} = pizzaSlice.actions;
     const {toggleAlert} = notificationSlice.actions;
 
     const lastPageIndex = currentPage * onPage; // 8
     const firstPageIndex = lastPageIndex - onPage; // 0
-    const sliced = filteredPizzas.slice(firstPageIndex, lastPageIndex);
+    
+    useEffect(() => {
+        console.log('Отфильтрованные пиццы', filteredPizzas)
+    }, [filteredPizzas])
 
     const addPizzaToBasket = (pizza_title: string, pizza_counter: number, pizza_id: string, pizza_price: number, pizza_img: string, pizza_descr: string) => {
 
         dispatch(addToBasketCart({pizza_title: pizza_title, pizza_counter: pizza_counter, pizza_id: pizza_id, pizza_price: pizza_price, pizza_img: pizza_img, pizza_descr: pizza_descr}))
-
         dispatch(dispatch(toggleAlert({ type: "pizza", value: true })))
     }
 
@@ -44,18 +48,14 @@ const Pizzas: React.FC = () => {
     }, [currentPage, location.pathname])
 
     useEffect(() => {
-        dispatch(setFilterMode(pizzaData))
-    }, [location.pathname])
-
-    useEffect(() => {
         setLoading(true);
 
         const timeOut = setTimeout(() => {
             setLoading(false);
-        }, 1200);
+        }, 700);
 
         return () => clearTimeout(timeOut)
-    }, [selectedOption, currentPage])
+    }, [selectedOption, currentPage, searchParams])
 
     useEffect(() => {
         console.log('Выбранные пиццы', selectedPizza)
@@ -64,14 +64,14 @@ const Pizzas: React.FC = () => {
 
     return (
         <>
-        {loading ? <div className=""><LoadSkeleton/></div> : sliced.map((item) => {
+        {loading ? <LoadSkeleton/> : filteredPizzas.slice(firstPageIndex, lastPageIndex).map((item) => {
             return <div key={item.id} className="pizza-block__item md:max-w-[600px] xs:w-full my-4 relative">
 
             <div className="flex justify-between items-center w-full md:absolute xs:relative">
                 <h1 className="text-black md:text-2xl xs:text-md w-max font-nunito uppercase font-extrabold p-1">{item.pizza_title}</h1>
                 <Rating value={item.rating} cancel={false} className="custom-rating px-2 h-12" style={{color: '#FFA500'}} />
             </div>
-                <Link to={`/pizza-product/${slugify(item.pizza_title, { lower: true, locale: 'ru'})}`}>
+                <Link to={`/pizza-list/${slugify(item.pizza_title, { lower: true, locale: 'ru'})}`}>
                     <img
                         alt="pizza_img"
                         src={item.pizza_img}
@@ -109,3 +109,5 @@ const Pizzas: React.FC = () => {
     )
 }
 export default Pizzas;
+
+// Проблема в том что при странице 1, мы получаем фильтр а при странице 2 или 3 нет

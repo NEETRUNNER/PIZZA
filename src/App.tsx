@@ -41,7 +41,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<LazyStart/>} />
           <Route path="/pizzas-list/:pizzaPage" element={<LazyPizzasList/>} />
-          <Route path="/pizza-product/:pizzaTitle" element={<LazyPizzaItem/>} />
+          <Route path="/pizza-list/:pizzaTitle" element={<LazyPizzaItem/>} />
           <Route path="/login" element={<LazyLogin/>} />
           <Route path="/registration" element={<LazyRegistration/>} />
           <Route path="/order" element={<LazyOrder/>} />
@@ -55,3 +55,5 @@ const App: React.FC = () => {
 }
 
 export default App
+
+// Нужно доделать пагинаацию

@@ -1,21 +1,26 @@
 import Slider from "react-slick";
 
-import {useDispatch} from "react-redux";
-import {filterSlice} from "../redux/reducers/filterSlice";
-import {Selectors} from "../redux/selectors";
-import {pizzaSlice} from "../redux/reducers/pizzaSlice";
+import { useDispatch } from "react-redux";
+import { Selectors } from "../redux/selectors";
+import { pizzaSlice } from "../redux/reducers/pizzaSlice";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 import { useEffect } from "react";
 
+import { useLocation, useSearchParams } from "react-router-dom";
+import { filterSlice } from "../redux/reducers/filterSlice";
+
 const FilterSlider: React.FC = () => {
     const dispatch = useDispatch();
-    const {selectedOption, pizzaData, filteredPizzas} = Selectors();
+    const {selectedOption, pizzaData, filteredPizzas, currentPage} = Selectors();
+    const location = useLocation();
 
-    const {setOption} = filterSlice.actions;
+    const [searchParams, setSearchParams] = useSearchParams();
+
     const {setFilterMode} = pizzaSlice.actions;
+    const {setOption} = filterSlice.actions;
 
     const settings = {
         className: "center",
@@ -67,6 +72,7 @@ const FilterSlider: React.FC = () => {
         return pizzaData.filter((pizza: { pizza_descr: string; }) => pizza.pizza_descr?.toLowerCase().includes(string));
     }
 
+    const allPizzas = filterArr('')
     const tomatoPizzas = filterArr('помідори');
     const cheesePizzas = filterArr('твердий сир');
     const salamiPizzas = filterArr('салямі');
@@ -78,102 +84,108 @@ const FilterSlider: React.FC = () => {
     const filteredExspensive = [...pizzaData].sort((a, b) => b.pizza_price - a.pizza_price);
     const filteredCheap = [...pizzaData].sort((a, b) => a.pizza_price - b.pizza_price);
     const filteredRating = [...pizzaData].sort((a, b) => b.rating - a.rating);
-
+    const filteredFamous = [...pizzaData];
+    
     useEffect(() => {
         console.log('Отлифильтрованные пиццы', filteredPizzas)
-    }, [selectedOption, filteredPizzas])
+        console.log(selectedOption) // Тоже самое что searchParams.toString().slice(1, searchParams.toString().length)
+    }, [selectedOption, filteredPizzas, searchParams])
+
+    const updateFilters = (newFilters: { sort?: string }) => {
+        searchParams.set("sort", (newFilters.sort as string));
+        dispatch(setOption(searchParams.toString().slice(5, searchParams.toString().length)))
+        setSearchParams(searchParams); // Устанавливается url надпись сверху
+    };
+
+    useEffect(() => {
+        console.log('Текущий фильтр', searchParams.toString().slice(5, searchParams.toString().length))
+        console.log('Текущий фильтр', selectedOption)
+    }, [searchParams, selectedOption])
 
     useEffect(() => {
         switch (selectedOption) {
             case 'exspensive':
-                dispatch(setFilterMode(filteredExspensive));
+                dispatch(setFilterMode(filteredExspensive.slice(0, filteredExspensive.length)));
                 break;
             case 'cheap':
-                dispatch(setFilterMode(filteredCheap))
+                dispatch(setFilterMode(filteredCheap.slice(0, filteredCheap.length)))
                 break;
             case 'rating':
-                dispatch(setFilterMode(filteredRating))
+                dispatch(setFilterMode(filteredRating.slice(0, filteredRating.length)))
+                break;
+            case 'famous':
+                dispatch(setFilterMode(filteredFamous.slice(0, filteredFamous.length)))
                 break;
             case 'tomato':
-                dispatch(setFilterMode(tomatoPizzas))
+                dispatch(setFilterMode(tomatoPizzas.slice(0, tomatoPizzas.length)))
                 break;
             case 'cheese':
-                dispatch(setFilterMode(cheesePizzas))
+                dispatch(setFilterMode(cheesePizzas.slice(0, cheesePizzas.length)))
                 break;
             case 'salami':
-                dispatch(setFilterMode(salamiPizzas))
+                dispatch(setFilterMode(salamiPizzas.slice(0, salamiPizzas.length)))
                 break;
             case 'cheeseSauce':
-                dispatch(setFilterMode(cheeseSauce))
+                dispatch(setFilterMode(cheeseSauce.slice(0, cheeseSauce.length)))
                 break;
             case 'pineapple':
-                dispatch(setFilterMode(pineapple))
+                dispatch(setFilterMode(pineapple.slice(0, pineapple.length)))
                 break;
             case 'sousage':
-                dispatch(setFilterMode(sousage))
+                dispatch(setFilterMode(sousage.slice(0, sousage.length)))
                 break;
             case 'mushroom':
-                dispatch(setFilterMode(mushroom))
+                dispatch(setFilterMode(mushroom.slice(0, mushroom.length)))
                 break;
             case 'all':
-                dispatch(setFilterMode(pizzaData))
+                dispatch(setFilterMode(allPizzas))
                 break;
             default:
                 dispatch(setFilterMode(pizzaData))
+                break;
         }
-    }, [dispatch, selectedOption])
+    }, [currentPage, selectedOption])
+
+    useEffect(() => {
+        setSearchParams({sort: 'all'}) // При перезапуске страницы возвращается ко всем пиццам
+    }, [location.pathname]);
 
       return (
-        <div className="slider-container md:w-[35%] xs:w-5/6 my-4">
+        <div className="slider-container md:w-[35%] xs:w-5/6 md:my-4 xs:my-8">
             <Slider {...settings}>
-                <div>
-                    <label className="label bg-black">
-                        <input onChange={(e) => dispatch(setOption(e.target.value))} value="all" name="value-radio" id="value-1" className="radio-input" type="radio"/>
-                        <div className="label-text font-nunito xl:text-md md:text-xs xs:text-xs">Усі</div>
-                    </label>
-                </div>
-                <div>
-                    <label className="label">
-                        <input onChange={(e) => dispatch(setOption(e.target.value))} value="salami" name="value-radio" id="value-1" className="radio-input" type="radio"/>
-                        <div className="label-text font-nunito xl:text-md md:text-xs xs:text-xs">З Салямі</div>
-                    </label>
-                </div>
-                <div>
-                    <label className="label">
-                        <input onChange={(e) => dispatch(setOption(e.target.value))} value="cheese" name="value-radio" id="value-2" className="radio-input" type="radio"/>
-                        <div className="label-text font-nunito xl:text-md md:text-xs xs:text-xs">З сиром</div>
-                    </label>
-                </div>
-                <div>
-                    <label className="label">
-                        <input onChange={(e) => dispatch(setOption(e.target.value))} value="cheeseSauce" name="value-radio" id="value-3" className="radio-input" type="radio"/>
-                        <div className="label-text font-nunito xl:text-md md:text-xs xs:text-xs whitespace-nowrap">З сирним соусом</div>
-                    </label>
-                </div>
-                <div>
-                    <label className="label">
-                        <input onChange={(e) => dispatch(setOption(e.target.value))} value="tomato" name="value-radio" id="value-4" className="radio-input" type="radio"/>
-                        <div className="label-text font-nunito xl:text-md md:text-xs xs:text-xs">З помідорами</div>
-                    </label>
-                </div>
-                <div>
-                    <label className="label">
-                        <input onChange={(e) => dispatch(setOption(e.target.value))} value="pineapple" name="value-radio" id="value-5" className="radio-input" type="radio"/>
-                        <div className="label-text font-nunito xl:text-md md:text-xs xs:text-xs">З ананасами</div>
-                    </label>
-                </div>
-                <div>
-                    <label className="label">
-                        <input onChange={(e) => dispatch(setOption(e.target.value))} value="sousage" name="value-radio" id="value-5" className="radio-input" type="radio"/>
-                        <div className="label-text font-nunito xl:text-md md:text-xs xs:text-xs">З ковбасками</div>
-                    </label>
-                </div>
-                <div>
-                    <label className="label">
-                        <input onChange={(e) => dispatch(setOption(e.target.value))} value="mushroom" name="value-radio" id="value-5" className="radio-input" type="radio"/>
-                        <div className="label-text font-nunito xl:text-md md:text-xs xs:text-xs">З грибами</div>
-                    </label>
-                </div>
+
+            <button className={`py-2 font-nunito font-bold xl:text-md md:text-xs xs:text-xs text-black uppercase flex justify-center items-center h-full transition-all ${searchParams.toString().slice(5, searchParams.toString().length) === 'all' ? 'bg-orange-500' : 'bg-transparent'}`} onClick={() => updateFilters({ sort: "all" })}>
+                Усі
+            </button>
+
+            <button className={`py-2 font-nunito font-bold xl:text-md md:text-xs xs:text-xs text-black uppercase flex justify-center items-center h-full transition-all ${searchParams.toString().slice(5, searchParams.toString().length) === 'salami' ? 'bg-orange-500' : 'bg-transparent'}`} onClick={() => updateFilters({ sort: "salami" })}>
+                З салямі
+            </button>
+
+            <button className={`py-2 font-nunito font-bold xl:text-md md:text-xs xs:text-xs text-black uppercase flex justify-center items-center h-full transition-all ${searchParams.toString().slice(5, searchParams.toString().length) === 'chease' ? 'bg-orange-500' : 'bg-transparent'}`} onClick={() => updateFilters({ sort: "chease" })}>
+                З сиром
+            </button>
+
+            <button className={`py-2 font-nunito font-bold xl:text-md md:text-xs xs:text-xs text-black uppercase flex justify-center items-center h-full transition-all ${searchParams.toString().slice(5, searchParams.toString().length) === 'mushroom' ? 'bg-orange-500' : 'bg-transparent'}`} onClick={() => updateFilters({ sort: "mushroom" })}>
+                З грибами
+            </button>
+
+            <button className={`py-2 font-nunito font-bold xl:text-md md:text-xs xs:text-xs text-black uppercase flex justify-center items-center h-full transition-all ${searchParams.toString().slice(5, searchParams.toString().length) === 'cheaseSauce' ? 'bg-orange-500' : 'bg-transparent'}`} onClick={() => updateFilters({ sort: "cheaseSauce" })}>
+                З сирним соусом
+            </button>
+
+            <button className={`py-2 font-nunito font-bold xl:text-md md:text-xs xs:text-xs text-black uppercase flex justify-center items-center h-full transition-all ${searchParams.toString().slice(5, searchParams.toString().length) === 'sousage' ? 'bg-orange-500' : 'bg-transparent'}`} onClick={() => updateFilters({ sort: "sousage" })}>
+                З ковбасками
+            </button>
+
+            <button className={`py-2 font-nunito font-bold xl:text-md md:text-xs xs:text-xs text-black uppercase flex justify-center items-center h-full transition-all ${searchParams.toString().slice(5, searchParams.toString().length) === 'pineapple' ? 'bg-orange-500' : 'bg-transparent'}`} onClick={() => updateFilters({ sort: "pineapple" })}>
+                З ананасами
+            </button>
+
+            <button className={`py-2 font-nunito font-bold xl:text-md md:text-xs xs:text-xs text-black uppercase flex justify-center items-center h-full transition-all ${searchParams.toString().slice(5, searchParams.toString().length) === 'tomato' ? 'bg-orange-500' : 'bg-transparent'}`} onClick={() => updateFilters({ sort: "tomato" })}>
+                З помідорами
+            </button>
+
             </Slider>
         </div>
       );
