@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { Selectors } from "../redux/selectors";
 import { useDispatch } from "react-redux";
 
-import TipsPizza from "../components/tipsPizza";
+import TipsPizza from "../components/RecomendationPizzas";
 
 import { pizzaSlice } from "../redux/reducers/pizzaSlice";
 import { notificationSlice } from "../redux/reducers/notificationSlice";

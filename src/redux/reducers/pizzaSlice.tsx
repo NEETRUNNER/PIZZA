@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { pizzaDataFetch, filteredByCategory, getTotalPages, filteredByPrice } from "../thunks/Thunks"; // Импортируем данные из Thunks
+import { pizzaDataFetch, filteredByCategory, getTotalPages, filteredByPrice, getRecomendationPizzas } from "../thunks/Thunks"; // Импортируем данные из Thunks
 
 export interface pizzaState {
     pizzaData: {
@@ -14,7 +14,7 @@ export interface pizzaState {
         rating: number;
     }[];
 
-    tipData: {
+    recomendationPizzas: {
         pizza_weight: string;
         id: string;
         pizza_title: string;
@@ -64,12 +64,12 @@ export interface pizzaState {
 const initialState: pizzaState = {
     pizzaData: [],
     filteredPizzas: [],
-    tipData: [],
+    recomendationPizzas: [],
     selectedPizza: [],
     pizzaPrice: 0,
     pizzasForDelivery: [],
     totalPizzaPrice: [],
-    totalPages: 1
+    totalPages: 1,
 }
 
 export const pizzaSlice = createSlice({
@@ -152,6 +152,7 @@ export const pizzaSlice = createSlice({
         }
 
     },
+
     extraReducers: (builder) => { // Они нужны для работы с createAsyncThunk
         builder.addCase(pizzaDataFetch.fulfilled, (state, action) => {
             state.pizzaData = action.payload;
@@ -163,6 +164,10 @@ export const pizzaSlice = createSlice({
 
         builder.addCase(filteredByPrice.fulfilled, (state, action) => {
             state.filteredPizzas = action.payload;
+        }),
+
+        builder.addCase(getRecomendationPizzas.fulfilled, (state, action) => {
+            state.recomendationPizzas = action.payload;
         }),
 
         builder.addCase(getTotalPages.fulfilled, (state, action) => {

@@ -18,7 +18,7 @@ interface propsForPrice {
 export const pizzaDataFetch = createAsyncThunk(
     'pizzaData/PizzaDataFetch',
     async ({page = 1, limit = 8}: {page: number, limit: number}) => {
-        const response = await axios.get(`https://pizza-backend.up.railway.app/pizza/getPaginatePizza/?page=${page}&limit=${limit}`);
+        const response = await axios.get(`https://pizza-backend.up.railway.app/pizza/getPaginatePizza?page=${page}&limit=${limit}`);
         return response.data.pizzas;
     }
 ) 
@@ -50,10 +50,10 @@ export const getTotalPages = createAsyncThunk(
     }
 )
 
-/* export const sortDataFetch = createAsyncThunk(
-    'sortedData/SortedDataFetch',
-    async ({page = 1, limit = 8, sortBy, sortOrder}: {page: number, limit: number, sortBy: string, sortOrder: string | undefined}) => {
-        const response = await axios.get(`http://localhost:5000/pizza/getSortPizza?page=${page}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}`);
-        return response.data.pizzas; // Либо pizzas либо total
+export const getRecomendationPizzas = createAsyncThunk(
+    'getPages/getRecomendationPizzas',
+    async () => {
+        const response = await axios.get(`https://pizza-backend.up.railway.app/pizza/getRecomendationPizzas`);
+        return response.data;
     }
-) */
+)

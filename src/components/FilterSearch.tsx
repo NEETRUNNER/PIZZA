@@ -1,6 +1,6 @@
 import slugify from 'slugify';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { IoMdArrowForward, IoMdClose } from "react-icons/io";
@@ -8,6 +8,7 @@ import { Selectors } from '../redux/selectors';
 
 import { menuSlice } from '../redux/reducers/menuSlice';
 import { useDispatch } from 'react-redux';
+import { pizzaDataFetch } from '../redux/thunks/Thunks';
 
 interface filterState {
     pizza_weight: string;
@@ -20,8 +21,8 @@ interface filterState {
     amount: number;
 }
 
-const InputFilter: React.FC<any> = ({className}) => { // Это обьявление функционального компонента который дженериком принимает типы пропсов
-    const dispatch = useDispatch();
+const FilterSearch: React.FC<any> = ({className}) => { // Это обьявление функционального компонента который дженериком принимает типы пропсов
+    const dispatch = useDispatch<any>();
     const {pizzaData, toggleBurgerMenu} = Selectors();
 
     const [inputData, setInputData] = useState<string | undefined>('');
@@ -32,7 +33,11 @@ const InputFilter: React.FC<any> = ({className}) => { // Это обьявлен
 
     const {toggleMenuBurger} = menuSlice.actions;
 
-/*     const search = pizzaData.filter(item => item.pizza_title.includes(inputData ? inputData : ''));
+    useEffect(() => {
+        dispatch(pizzaDataFetch({page: 1, limit: 20}))
+    }, [])
+
+    const search = pizzaData.filter(item => item.pizza_title.includes(inputData ? inputData : ''));
 
     useEffect(() => {
         setFilteredPizzas(search)
@@ -40,7 +45,7 @@ const InputFilter: React.FC<any> = ({className}) => { // Это обьявлен
             setInputData('')
             setFilteredPizzas([])
         }
-    }, [inputData]) */
+    }, [inputData])
 
     const closeFilter = () => {
         document.addEventListener('click', (e) => {
@@ -86,7 +91,7 @@ const InputFilter: React.FC<any> = ({className}) => { // Это обьявлен
                 filteredPizzas.map((item, index) => (
                     <Link
                     key={index}
-                    to={`/pizza-product/${slugify(item.pizza_title, { lower: true, locale: 'ru' })}`}
+                    to={`/pizza-list/${slugify(item.pizza_title, { lower: true, locale: 'ru' })}`}
                     onClick={() => closeMenu()}
                     className="flex items-center p-4 hover:bg-gray-100 transition-colors border-b border-gray-200 last:border-b-0"
                     >
@@ -120,4 +125,4 @@ const InputFilter: React.FC<any> = ({className}) => { // Это обьявлен
     )
 }
 
-export default InputFilter;
+export default FilterSearch;

@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { menuSlice } from '../redux/reducers/menuSlice';
 import { userSlice } from '../redux/reducers/userSlice';
 
-import InputFilter from './FilterSearch';
+import FilterSearch from './FilterSearch';
 import { FaRegUserCircle } from "react-icons/fa";
 
 import { useTransition, animated } from '@react-spring/web';
@@ -54,7 +54,7 @@ const PizzaMenu: React.FC = () => {
     return transitions((style, item) => item && (
         <animated.div style={style} ref={menuRef} className={`pizza-menu bg-white h-full w-5/6 fixed z-20`}>
             <div className="pizza-menu__container py-16 h-screen">
-                <InputFilter className={'md:hidden xm:block xs:block my-4'}/>
+                <FilterSearch className={'md:hidden xm:block xs:block my-4'}/>
 
                 <div className="account-btn absolute bottom-0 justify-center flex w-full mb-4">
                     {loginToken ? 

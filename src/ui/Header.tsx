@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GiShoppingCart } from "react-icons/gi";
 import { FaRegUserCircle } from "react-icons/fa";
 
-import InputFilter from '../components/FilterSearch';
+import FilterSearch from '../components/FilterSearch';
 
 import { useDispatch } from 'react-redux';
 import { useRef, useState } from 'react';
@@ -60,7 +60,7 @@ const Header: React.FC = () => {
                     <img src={logo} alt="" className="md:max-w-max xs:max-w-1/2 md:w-11/12 xm:w-3/6 xs:w-3/4 z-30 relative" />
                 </Link>
 
-                <InputFilter className='md:block xm:hidden xs:hidden'/>
+                <FilterSearch className='md:block xm:hidden xs:hidden'/>
 
                 <div className='flex items-center justify-center'>
 
