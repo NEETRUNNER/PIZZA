@@ -7,10 +7,8 @@ import PizzaCart from './components/PizzaCart';
 import PizzaMenu from './components/PizzaMenu'
 import Notifications from './other/Notifications';
 
-import { useDispatch } from 'react-redux';
-import { pizzaDataFetch, filteredDataFetch, tipsDataFetch } from './redux/thunks/Thunks';
-
 import pizzaLoading from '../src/img/pizza_loading.gif'
+import { Selectors } from './redux/selectors';
 
 const LazyPizzasList = lazy(() => import('./navigation/PizzaList'));
 const LazyStart = lazy(() => import('./navigation/Start'));
@@ -20,13 +18,11 @@ const LazyRegistration = lazy(() => import('./navigation/RegistrationPage'))
 const LazyOrder = lazy(() => import('./navigation/Order'))
 
 const App: React.FC = () => {
-  const dispatch = useDispatch<any>(); // Нужно добавлять any когда работаем с createAsyncThunk, чтобы он не вызывал ошибку
+  const {filteredPizzas} = Selectors();
 
   useEffect(() => {
-    dispatch(pizzaDataFetch());
-    dispatch(filteredDataFetch());
-    dispatch(tipsDataFetch());
-  }, []);
+    console.log(filteredPizzas)
+  }, [filteredPizzas])
 
   return (
     <Suspense fallback={<div className="overlay h-screen w-full flex justify-center items-center flex-col"><img src={pizzaLoading} alt="" className="w-32" /></div>}>
@@ -56,4 +52,4 @@ const App: React.FC = () => {
 
 export default App
 
-// Нужно доделать пагинаацию
+// Сегодня доразобраться с пагинацией обновить бекенд на railway, изменить описание проекта на github и всё задеплоить чтобы работало автономно

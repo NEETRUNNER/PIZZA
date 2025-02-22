@@ -5,7 +5,7 @@ interface initialState {
 }
 
 const initialState: initialState = {
-    selectedOption: '',
+    selectedOption: 'all',
 }
 
 export const filterSlice = createSlice({

@@ -16,27 +16,19 @@ import { LoadSkeleton } from "../other/Skeleton";
 import { useSearchParams } from "react-router-dom";
 
 const Pizzas: React.FC = () => {
-    const {currentPage, onPage, selectedPizza, pizzasForDelivery, filteredPizzas, selectedOption} = Selectors();
+    const {currentPage, selectedPizza, pizzasForDelivery, selectedOption, filteredPizzas} = Selectors();
     const [loading, setLoading] = useState<boolean>(true);
+
     const { pizzaPage } = useParams<{pizzaPage: string}>();
     const [searchParams, ] = useSearchParams();
-
     const location = useLocation();
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<any>(); // Нужно добавлять any когда работаем с createAsyncThunk, чтобы он не вызывал ошибку
 
     const {setCurrentPage} = paginationSlice.actions;
     const {addPizza, deletePizza, addToBasketCart} = pizzaSlice.actions;
     const {toggleAlert} = notificationSlice.actions;
 
-    const lastPageIndex = currentPage * onPage; // 8
-    const firstPageIndex = lastPageIndex - onPage; // 0
-    
-    useEffect(() => {
-        console.log('Отфильтрованные пиццы', filteredPizzas)
-    }, [filteredPizzas])
-
     const addPizzaToBasket = (pizza_title: string, pizza_counter: number, pizza_id: string, pizza_price: number, pizza_img: string, pizza_descr: string) => {
-
         dispatch(addToBasketCart({pizza_title: pizza_title, pizza_counter: pizza_counter, pizza_id: pizza_id, pizza_price: pizza_price, pizza_img: pizza_img, pizza_descr: pizza_descr}))
         dispatch(dispatch(toggleAlert({ type: "pizza", value: true })))
     }
@@ -64,7 +56,7 @@ const Pizzas: React.FC = () => {
 
     return (
         <>
-        {loading ? <LoadSkeleton/> : filteredPizzas.slice(firstPageIndex, lastPageIndex).map((item) => {
+        {loading ? <LoadSkeleton/> : filteredPizzas.map((item) => {
             return <div key={item.id} className="pizza-block__item md:max-w-[600px] xs:w-full my-4 relative">
 
             <div className="flex justify-between items-center w-full md:absolute xs:relative">

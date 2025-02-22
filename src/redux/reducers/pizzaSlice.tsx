@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { pizzaDataFetch, filteredDataFetch, tipsDataFetch } from "../thunks/Thunks"; // Импортируем данные из Thunks
+import { pizzaDataFetch, filteredByCategory, getTotalPages, filteredByPrice } from "../thunks/Thunks"; // Импортируем данные из Thunks
 
 export interface pizzaState {
     pizzaData: {
@@ -57,6 +57,8 @@ export interface pizzaState {
         amount: number;
         rating: number;
     }[];
+
+    totalPages: number;
 }
 
 const initialState: pizzaState = {
@@ -66,7 +68,8 @@ const initialState: pizzaState = {
     selectedPizza: [],
     pizzaPrice: 0,
     pizzasForDelivery: [],
-    totalPizzaPrice: []
+    totalPizzaPrice: [],
+    totalPages: 1
 }
 
 export const pizzaSlice = createSlice({
@@ -153,11 +156,17 @@ export const pizzaSlice = createSlice({
         builder.addCase(pizzaDataFetch.fulfilled, (state, action) => {
             state.pizzaData = action.payload;
         }),
-        builder.addCase(filteredDataFetch.fulfilled, (state, action) => {
+
+        builder.addCase(filteredByCategory.fulfilled, (state, action) => {
             state.filteredPizzas = action.payload;
         }),
-        builder.addCase(tipsDataFetch.fulfilled, (state, action) => {
-            state.tipData = action.payload;
+
+        builder.addCase(filteredByPrice.fulfilled, (state, action) => {
+            state.filteredPizzas = action.payload;
+        }),
+
+        builder.addCase(getTotalPages.fulfilled, (state, action) => {
+            state.totalPages = action.payload;
         })
     }
 })

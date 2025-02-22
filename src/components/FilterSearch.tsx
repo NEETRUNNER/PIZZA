@@ -32,7 +32,7 @@ const InputFilter: React.FC<any> = ({className}) => { // Это обьявлен
 
     const {toggleMenuBurger} = menuSlice.actions;
 
-    const search = pizzaData.filter(item => item.pizza_title.includes(inputData ? inputData : ''));
+/*     const search = pizzaData.filter(item => item.pizza_title.includes(inputData ? inputData : ''));
 
     useEffect(() => {
         setFilteredPizzas(search)
@@ -40,7 +40,7 @@ const InputFilter: React.FC<any> = ({className}) => { // Это обьявлен
             setInputData('')
             setFilteredPizzas([])
         }
-    }, [inputData])
+    }, [inputData]) */
 
     const closeFilter = () => {
         document.addEventListener('click', (e) => {

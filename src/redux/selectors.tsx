@@ -10,7 +10,7 @@ export const Selectors = () => { // Селекторы нужны для соз�
     const currentPage = useSelector((state: RootState) => state.pagination.currentPage)
     
     const toggleBasketCart = useSelector((state: RootState) => state.menu.toggleCartMenu)
-    const toggleBurgerMenu = useSelector((state:RootState) => state.menu.toggleBurgerMenu)
+    const toggleBurgerMenu = useSelector((state: RootState) => state.menu.toggleBurgerMenu)
 
     const selectedPizza = useSelector((state: RootState) => state.pizza.selectedPizza);
     const pricePizza = useSelector((state: RootState) => state.pizza.pizzaPrice);

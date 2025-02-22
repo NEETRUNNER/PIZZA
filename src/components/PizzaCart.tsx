@@ -55,7 +55,7 @@ const PizzaCart: React.FC = () => {
     return transitions((style, item) => item && (
       <animated.div
         style={style}
-        onClick={() => dispatch(toggleMenuCart(false))}
+        /* onClick={() => dispatch(toggleMenuCart(false))} */
         ref={menuRef}
         className="cart bg-white xs:max-h-1/4 lg:w-1/4 md:w-4/12 xs:w-full fixed right-0 z-40 overflow-auto"
       >

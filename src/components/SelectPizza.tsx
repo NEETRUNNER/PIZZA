@@ -1,26 +1,29 @@
 import Select from 'react-select';
-import { useSearchParams } from 'react-router-dom';
-import { useEffect } from 'react';
-import { filterSlice } from '../redux/reducers/filterSlice';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+
+import { filteredByPrice } from '../redux/thunks/Thunks';
 import { Selectors } from '../redux/selectors';
 
 const SelectPizza: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const {selectedOption} = Selectors();
-    const {setOption} = filterSlice.actions;
-    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const updateFilters = (newFilters: { sort?: string }) => {
-      searchParams.set("sort", (newFilters.sort as string));
-      dispatch(setOption(searchParams.toString().slice(5, searchParams.toString().length)));
+    const { currentPage } = Selectors();
+    const dispatch = useDispatch<any>();
+
+    const updateFilters = (category: string | undefined, sortBy: string | undefined, sortOrder: string | undefined) => {
+      searchParams.set("sortBy", (sortBy as string));
+      searchParams.set("sortOrder", (sortOrder as string))
+
+      dispatch(filteredByPrice({page: currentPage, limit: 8, category: category, sortBy: sortBy, sortOrder: sortOrder})) // Фильтр работает корректно
       setSearchParams(searchParams);
-    };
 
-    useEffect(() => {
-      console.log(selectedOption)
-      searchParams.delete("sort")
-    }, [selectedOption])
+      navigate(`/pizzas-list/${currentPage}/?category=${undefined}&sortBy=${sortBy}&sortOrder=${sortOrder}`, {replace: true})
+
+      console.log('Сортировка по', sortBy)
+      console.log('Тип сортировки', sortOrder)
+    };
 
     const customStyles = {
         control: (base: any, state: { isFocused: any; }) => ({
@@ -75,19 +78,25 @@ const SelectPizza: React.FC = () => {
         },
     });
 
+    interface optionType {
+      value: string;
+      label: string;
+      sortOrder: string;
+      sortBy: string;
+      category: string;
+    }
+
+    const options: optionType[] = [
+       {value: 'expensive', label: 'Від дорогих до дешевих', category: 'all', sortOrder: 'expensive', sortBy: 'pizza_price'},
+       {value: 'cheap', label: 'Від дешевих до дорогих', category: 'all', sortOrder: 'cheap', sortBy: 'pizza_price'}
+    ];
+
     return (
         <Select
         isSearchable={false}
         className="md:w-72 xs:w-5/6 my-4 text-black md:text-md xs:text-xm font-nunito"
-        defaultValue={{value: 'famous', label: 'За популярністю'}}
-        onChange={(e) => updateFilters({sort: e?.value})}
-        options={[
-          { value: 'all', label: 'Усі піци' }, // 🆕 Добавили вариант "все пиццы"
-          { value: 'exspensive', label: 'Від дорогих до дешевих' },
-          { value: 'cheap', label: 'Від дешевих до дорогих' },
-          { value: 'famous', label: 'За популярністю' },
-          { value: 'rating', label: 'За рейтингом' },
-        ]}
+        onChange={(e) => updateFilters(e?.category, e?.sortBy, e?.sortOrder)}
+        options={options}
         styles={customStyles}
         theme={customTheme}
         placeholder="Оберіть фільтр"

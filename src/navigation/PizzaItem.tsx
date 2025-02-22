@@ -13,12 +13,17 @@ import { notificationSlice } from "../redux/reducers/notificationSlice";
 import 'react-inner-image-zoom/lib/InnerImageZoom/styles.css'
 import InnerImageZoom from 'react-inner-image-zoom'
 import slugify from "slugify";
+import { pizzaDataFetch } from "../redux/thunks/Thunks";
 
 const PizzaItem: React.FC = () => {
     const {pizzaPrice, pizzasForDelivery, selectedPizza, pizzaData} = Selectors();
     const { pizzaTitle } = useParams<{pizzaTitle: string}>();
     const location = useLocation();
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<any>();
+
+    useEffect(() => {
+        dispatch(pizzaDataFetch({page: 1, limit: 20}))
+    }, [])
     
     const {addPizza, deletePizza, addToBasketCart, resetPizzaItem} = pizzaSlice.actions;
     const {toggleAlert} = notificationSlice.actions;
